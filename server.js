@@ -6,11 +6,13 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// ✅ Allow requests from your deployed frontend (Vercel)
 app.use(cors({ origin: 'https://inventory-frontend-eta-lilac.vercel.app' }));
 app.use(express.json());
 
-// ✅ Use direct connection string if env not working:
-const mongoURI = process.env.MONGODB_URI || 'your-fallback-connection-string';
+// ✅ MongoDB connection
+const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://pavansaid3:pavansai0522@cluster0.bzp6pp4.mongodb.net/inventory?retryWrites=true&w=majority';
+
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -18,6 +20,7 @@ mongoose.connect(mongoURI, {
 .then(() => console.log('✅ Connected to MongoDB Atlas'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
+// ✅ Item Schema and Model
 const itemSchema = new mongoose.Schema({
   name: String,
   quantity: Number,
@@ -26,7 +29,7 @@ const itemSchema = new mongoose.Schema({
 
 const Item = mongoose.model('Item', itemSchema);
 
-// ✅ All API Routes
+// ✅ Routes
 app.get('/items', async (req, res) => {
   try {
     const items = await Item.find();
@@ -64,7 +67,7 @@ app.delete('/items/:id', async (req, res) => {
   }
 });
 
-// ✅ Fix syntax issue on log
+// ✅ Server start
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
