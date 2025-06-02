@@ -6,10 +6,12 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+app.use(cors({ origin: 'https://inventory-frontend-eta-lilac.vercel.app' }));
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI, {
+// ✅ Use direct connection string if env not working:
+const mongoURI = process.env.MONGODB_URI || 'your-fallback-connection-string';
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
@@ -24,27 +26,45 @@ const itemSchema = new mongoose.Schema({
 
 const Item = mongoose.model('Item', itemSchema);
 
+// ✅ All API Routes
 app.get('/items', async (req, res) => {
-  const items = await Item.find();
-  res.json(items);
+  try {
+    const items = await Item.find();
+    res.json(items);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch items' });
+  }
 });
 
 app.post('/items', async (req, res) => {
-  const newItem = new Item(req.body);
-  await newItem.save();
-  res.status(201).json(newItem);
+  try {
+    const newItem = new Item(req.body);
+    await newItem.save();
+    res.status(201).json(newItem);
+  } catch (err) {
+    res.status(400).json({ error: 'Failed to create item' });
+  }
 });
 
 app.put('/items/:id', async (req, res) => {
-  const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
-  res.json(updatedItem);
+  try {
+    const updatedItem = await Item.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedItem);
+  } catch (err) {
+    res.status(400).json({ error: 'Failed to update item' });
+  }
 });
 
 app.delete('/items/:id', async (req, res) => {
-  await Item.findByIdAndDelete(req.params.id);
-  res.sendStatus(204);
+  try {
+    await Item.findByIdAndDelete(req.params.id);
+    res.sendStatus(204);
+  } catch (err) {
+    res.status(400).json({ error: 'Failed to delete item' });
+  }
 });
 
+// ✅ Fix syntax issue on log
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
