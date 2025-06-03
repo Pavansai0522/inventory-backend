@@ -6,15 +6,18 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// ✅ CORS setup for your deployed frontend
 const corsOptions = {
   origin: 'https://inventory-frontend-eta-lilac.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type']
+  allowedHeaders: ['Content-Type'],
+  credentials: true
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// MongoDB connection
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -22,7 +25,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('✅ Connected to MongoDB Atlas'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// Schema & Model
+// ✅ Schema and Model
 const itemSchema = new mongoose.Schema({
   name: String,
   quantity: Number,
@@ -30,7 +33,7 @@ const itemSchema = new mongoose.Schema({
 });
 const Item = mongoose.model('Item', itemSchema);
 
-// Routes
+// ✅ Routes
 app.get('/', (req, res) => {
   res.send('📦 Inventory backend is running.');
 });
