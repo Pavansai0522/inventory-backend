@@ -6,25 +6,29 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors({ origin: 'https://inventory-frontend-eta-lilac.vercel.app' }));
+app.use(cors());
 app.use(express.json());
 
-const mongoURI = process.env.MONGODB_URI || 'mongodb+srv://pavansaid3:pavansai0522@cluster0.bzp6pp4.mongodb.net/inventory?retryWrites=true&w=majority';
-
-mongoose.connect(mongoURI, {
+// MongoDB connection
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })
 .then(() => console.log('✅ Connected to MongoDB Atlas'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
+// Schema & Model
 const itemSchema = new mongoose.Schema({
   name: String,
   quantity: Number,
   price: Number
 });
-
 const Item = mongoose.model('Item', itemSchema);
+
+// Routes
+app.get('/', (req, res) => {
+  res.send('📦 Inventory backend is running.');
+});
 
 app.get('/items', async (req, res) => {
   try {
@@ -41,7 +45,7 @@ app.post('/items', async (req, res) => {
     await newItem.save();
     res.status(201).json(newItem);
   } catch (err) {
-    res.status(400).json({ error: 'Failed to create item' });
+    res.status(400).json({ error: 'Failed to add item' });
   }
 });
 
