@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 
 const corsOptions = {
-  origin: 'https://inventory-frontend-j01b48zp3-pavansais-projects-2abe6514.vercel.app',
+  origin: 'https://inventory-frontend-eta-lilac.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type']
 };
