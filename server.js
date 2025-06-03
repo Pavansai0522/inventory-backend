@@ -8,19 +8,16 @@ const PORT = process.env.PORT || 4000;
 
 // ✅ CORS setup to allow frontend access
 app.use(cors({
-  origin: 'https://inventory-frontend-eta-lilac.vercel.app',
+  origin: 'https://inventory-frontend-brown.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true
 }));
 app.use(express.json());
 
 // ✅ MongoDB connection
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
-.then(() => console.log('✅ Connected to MongoDB Atlas'))
-.catch(err => console.error('❌ MongoDB connection error:', err));
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ Connected to MongoDB Atlas'))
+  .catch(err => console.error('❌ MongoDB connection error:', err));
 
 // ✅ Schema and routes
 const itemSchema = new mongoose.Schema({
