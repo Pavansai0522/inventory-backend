@@ -1,28 +1,20 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config(); // Make sure this is at the top
 
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// ✅ Log all incoming request origins
-app.use((req, res, next) => {
-  console.log(`➡ Request Origin: ${req.headers.origin}`);
-  next();
-});
-
-// ✅ CORS setup for deployed frontend
-const corsOptions = {
+// ✅ CORS setup to allow frontend access
+app.use(cors({
   origin: 'https://inventory-frontend-eta-lilac.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type'],
   credentials: true
-};
-app.use(cors(corsOptions));
+}));
 app.use(express.json());
 
-// ✅ MongoDB Connection
+// ✅ MongoDB connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -30,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 .then(() => console.log('✅ Connected to MongoDB Atlas'))
 .catch(err => console.error('❌ MongoDB connection error:', err));
 
-// ✅ Mongoose Schema
+// ✅ Schema and routes
 const itemSchema = new mongoose.Schema({
   name: String,
   quantity: Number,
@@ -38,10 +30,7 @@ const itemSchema = new mongoose.Schema({
 });
 const Item = mongoose.model('Item', itemSchema);
 
-// ✅ Routes
-app.get('/', (req, res) => {
-  res.send('📦 Inventory backend is running.');
-});
+app.get('/', (req, res) => res.send('📦 Inventory backend is running.'));
 
 app.get('/items', async (req, res) => {
   try {
@@ -80,7 +69,6 @@ app.delete('/items/:id', async (req, res) => {
   }
 });
 
-// ✅ Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);
 });
