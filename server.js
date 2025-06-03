@@ -6,7 +6,12 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+const corsOptions = {
+  origin: 'https://inventory-frontend-j01b48zp3-pavansais-projects-2abe6514.vercel.app',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type']
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // MongoDB connection
